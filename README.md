@@ -1,18 +1,18 @@
-Serverless-Flux
-===============
+Serverless-Operator
+===================
 
-Bringing [GitOps](https://www.weave.works/blog/what-is-gitops-really) to Serverless with the help of [Flux](https://github.com/weaveworks/flux).
+Bringing [GitOps](https://www.weave.works/blog/what-is-gitops-really) to Serverless.
 
 ## Description
 
-The purpose of the Serverless-Flux project is to enable GitOps for serverless applications. A Git repo should represent the desired state of any number of serverless solutions and this state will be reconciled with the current state within a cloud provider. 
+The purpose of the Serverless-Operator project is to enable GitOps for serverless applications. A Git repo should represent the desired state of any number of serverless solutions and this state will be reconciled with the current state within a cloud provider. 
 
 The project has been started due to a gap in the serverless CICD experience, especially for scenarios where:
 - multiple environments are needed
 - environment promotion is needed
 - large and complex serverless solutions
 
-Initially we will be targetting the [Serverless Framework](https://serverless.com/) and its envisioned that the project will be self hosted using Kubernetes and Flux. However, in the future its envisioned that there may be a SaaS offering offering a free and paid for tiers for people that don't want to run their own infrastructure.
+Initially we will be targetting the [Serverless Framework](https://serverless.com/) and its envisioned that the project will be self hosted. However, in the future its envisioned that there may be a SaaS offering offering a free and paid for tiers for people that don't want to run their own infrastructure.
 
 Its influenced by [OpenFaas Cloud](https://github.com/openfaas/openfaas-cloud).
 
