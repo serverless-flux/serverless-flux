@@ -1,0 +1,18 @@
+apiVersion: serverless-operator.io/v1alpha1
+kind: ServerlessRelease
+metadata:
+  name: example-serverless-app
+spec:
+  packagePath: test-package.zip
+  releaseName: testing-v0.0.1
+  stage: staging
+  region: eu-west-1
+  verbose: false
+  env:
+    - name: MYVAR
+      value: somevalue
+    - name: MYSECRET_VAR
+      valueFrom:
+        secretKeyRef:
+            name: MYSECRET_VAR
+            key: username

@@ -39,9 +39,8 @@ func (c *Controller) StartWatch(namespace string, stopCh <-chan struct{}) error 
 	restClient := c.slsClientSet.RESTClient()
 	watcher := opkit.NewWatcher(Resource, namespace, resourceHandlers, restClient)
 
-	go func() {
-		_ = watcher.Watch(&sls.ServerlessRelease{}, stopCh)
-	}()
+	// nolint:errcheck
+	go watcher.Watch(&sls.ServerlessRelease{}, stopCh)
 
 	return nil
 }

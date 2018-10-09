@@ -14,7 +14,7 @@ var Resource = opkit.CustomResource{
 	Name:    "serverlessrelease",
 	Plural:  "serverlessreleases",
 	Group:   slsapi.GroupName,
-	Version: "v1alpha1",
+	Version: slsapi.Version,
 	Scope:   apiextensionsv1beta1.NamespaceScoped,
 	Kind:    reflect.TypeOf(slsapiv1.ServerlessRelease{}).Name(),
 	ShortNames: []string{
