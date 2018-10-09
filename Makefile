@@ -15,7 +15,7 @@ install-build-deps: ## Install dependencies (packages and tools)
 
 .PHONY: build
 build:
-	go build -ldflags "$(FLAGS)" ./cmd/serverless-operator
+	go build -ldflags "$(VER_FLAGS)" ./cmd/serverless-operator
 
 ##@ Testing & CI
 
