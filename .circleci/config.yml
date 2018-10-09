@@ -1,8 +1,9 @@
 version: 2
 jobs:
-  ci:
+  buildandtest:
     docker:
       - image: circleci/golang:1.11
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
       - run: make build
@@ -11,6 +12,7 @@ jobs:
   release:
     docker:
       - image: circleci/golang:1.11
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
       - run: curl -sL https://git.io/goreleaser | bash
@@ -18,10 +20,10 @@ workflows:
   version: 2
   any-commit:
     jobs:
-      - ci:
-        filters:
-          tags:
-            ignore: /.*/
+      - buildandtest:
+          filters:
+            tags:
+              ignore: /.*/
   release:
     jobs:
       - release:
