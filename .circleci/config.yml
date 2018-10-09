@@ -6,10 +6,17 @@ jobs:
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v${CACHE_VERSION}-pkg-cache
       - run: make install-build-deps
       - run: dep ensure
       - run: make build
       - run: make ci
+      - save_cache:
+          key: v${CACHE_VERSION}-pkg-cache
+          paths:
+            - ~/.cache/go-build
 
   release:
     docker:
