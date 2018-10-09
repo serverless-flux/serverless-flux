@@ -35,7 +35,7 @@ test: ## Run unit tests
 
 .PHONY: lint
 lint: ## Run linting over the codebase
-	@$(GOPATH)/bin/golangci-lint run
+	./bin/golangci-lint run
 
 .PHONY: ci
 ci: test lint ## Target for CI system to invoke to run tests and linting
