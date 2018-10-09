@@ -1,74 +1,117 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
-	"os/signal"
-	"sync"
-	"syscall"
+	"strings"
 
-	"github.com/go-kit/kit/log"
-	"github.com/spf13/pflag"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
+	homedir "github.com/mitchellh/go-homedir"
 )
 
 var (
-	logger log.Logger
-	fs     *pflag.FlagSet
+	kubeconfig string
+	master     string
+	cfgFile    string
+	logLevel   string
+	logFile    string
 
-	kubeconfig *string
-	master     *string
+	rootCmd = &cobra.Command{
+		Use:   "serverless-operator",
+		Short: "Serverless Operator is used to deploy and manage Serverless.com appliations",
+		Long:  "Serverless Operator is used to deploy and manage Serverless.com appliations. With a manifest file you can deploy, update or delete your serverless application.",
+		Run: func(c *cobra.Command, _ []string) {
+			c.Help()
+		},
+	}
 )
 
 func main() {
-	flag.CommandLine.Parse([]string{"-logtostderr"})
-	fs.Parse(os.Args)
+	cobra.OnInitialize(initConfig)
 
-	//TODO: output version
-
-	{
-		logger = log.NewLogfmtLogger(os.Stderr)
-		logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-		logger = log.With(logger, "caller", log.DefaultCaller)
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	errc := make(chan error)
+	/*
+		flag.CommandLine.Parse([]string{"-logtostderr"})
+		fs.Parse(os.Args)
 
-	// Shutdown trigger for goroutines
-	shutdown := make(chan struct{})
-	shutdownWg := &sync.WaitGroup{}
+		//TODO: output version
 
-	go func() {
-		c := make(chan os.Signal)
-		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-		errc <- fmt.Errorf("%s", <-c)
-	}()
+		{
+			logger = log.NewLogfmtLogger(os.Stderr)
+			logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+			logger = log.With(logger, "caller", log.DefaultCaller)
+		}
 
-	defer func() {
-		logger.Log("exiting...", <-errc)
-		close(shutdown)
-		shutdownWg.Wait()
-	}()
+		errc := make(chan error)
 
-	clusterConfig, err := clientcmd.BuildConfigFromFlags(*master, *kubeconfig)
-	if err != nil {
-		//TODO: Log error
-	}
+		// Shutdown trigger for goroutines
+		shutdown := make(chan struct{})
+		shutdownWg := &sync.WaitGroup{}
 
-	kubeClient, err := kubernetes.NewForConfig(clusterConfig)
-	if err != nil {
-		//TODO: log error
-	}
+		go func() {
+			c := make(chan os.Signal)
+			signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+			errc <- fmt.Errorf("%s", <-c)
+		}()
+
+		defer func() {
+			logger.Log("exiting...", <-errc)
+			close(shutdown)
+			shutdownWg.Wait()
+		}()
+
+		clusterConfig, err := clientcmd.BuildConfigFromFlags(*master, *kubeconfig)
+		if err != nil {
+			//TODO: Log error
+		}
+
+		kubeClient, err := kubernetes.NewForConfig(clusterConfig)
+		if err != nil {
+			//TODO: log error
+		}
+	*/
 
 }
 
 func init() {
-	fs = pflag.NewFlagSet("default", pflag.ExitOnError)
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "f", "Config file (default is $HOME/.serverless-operator.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&kubeconfig, "kubeconfig", "k", "", "Absolute path to the kubeconfig file. Only required if out-of-cluster.")
+	rootCmd.PersistentFlags().StringVarP(&master, "master", "m", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
+	rootCmd.PersistentFlags().StringVarP(&logLevel, "loglevel", "l", "Info", "Log level for the CLI")
+	rootCmd.PersistentFlags().StringVarP(&logFile, "logfile", "", "", "Log level for the CLI")
 
-	kubeconfig = fs.String("kubeconfig", "", "Absolute path to the kubeconfig file. Only required if out-of-cluster.")
-	master = fs.String("master", "", "The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.")
+	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
+	viper.BindPFlag("kubeconfig", rootCmd.PersistentFlags().Lookup("kubeconfig"))
+	viper.BindPFlag("master", rootCmd.PersistentFlags().Lookup("master"))
+	viper.BindPFlag("loglevel", rootCmd.PersistentFlags().Lookup("loglevel"))
+	viper.BindPFlag("logfile", rootCmd.PersistentFlags().Lookup("logfile"))
+}
 
+func initConfig() {
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	} else {
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		viper.AddConfigPath(home)
+		viper.SetConfigName(".serverless-operator")
+	}
+
+	replacer := strings.NewReplacer(".", "-")
+	viper.SetEnvKeyReplacer(replacer)
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
 }

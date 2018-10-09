@@ -9,6 +9,7 @@ import (
 // +genclient:noStatus
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
+// ServerlessRelease represents a Serverless.com app release
 type ServerlessRelease struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata, omitempty"`
@@ -17,6 +18,7 @@ type ServerlessRelease struct {
 	Status ServerlessReleaseStatus `json:"status"`
 }
 
+// ServerlessReleaseSpec defines the Spec for the Serverless.com application
 type ServerlessReleaseSpec struct {
 	PackagePath string   `json:"packagePath"`
 	ReleaseName string   `json:"releaseName,omitempty"`
@@ -26,6 +28,7 @@ type ServerlessReleaseSpec struct {
 	Env         []EnvVar `json:"env"`
 }
 
+// ServerlessReleaseStatus defines the status of the ServerlessRelease
 type ServerlessReleaseStatus struct {
 	ReleaseStatus string `json:"releaseStatus"`
 }
@@ -49,4 +52,13 @@ type EnvVarSource struct {
 
 	// Selects a key of a secret in the pod's namespace
 	SecretKeyRef *apiv1.SecretKeySelector `json:"secretKeyRef,omitempty"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// ServerlessReleaseList is a list if serverless release resources
+type ServerlessReleaseList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata"`
+	Items           []ServerlessRelease `json:"items"`
 }

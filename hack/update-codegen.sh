@@ -13,5 +13,4 @@ ${CODEGEN_PKG}/generate-groups.sh all \
   github.com/serverless-operator/serverless-operator/pkg/client \
   github.com/serverless-operator/serverless-operator/pkg/apis \
   "serverlessrelease:v1alpha1" \
-  --output-base "$(dirname ${BASH_SOURCE})/../../.." \
---go-header-file ${SCRIPT_ROOT}/hack/boilerplate.go.txt
+  --go-header-file ${SCRIPT_ROOT}/hack/boilerplate.go.txt

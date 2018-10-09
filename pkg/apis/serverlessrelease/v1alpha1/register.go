@@ -8,6 +8,7 @@ import (
 	"github.com/serverless-operator/serverless-operator/pkg/apis/serverlessrelease"
 )
 
+// SchemeBuilder definition
 var (
 	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
 	AddToScheme   = SchemeBuilder.AddToScheme
@@ -30,7 +31,7 @@ func Resource(resource string) schema.GroupResource {
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&ServerlessRelease{},
-		&ServerlessRelease{},
+		&ServerlessReleaseList{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
