@@ -6,6 +6,8 @@ jobs:
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
+      - run: make install-build-deps
+      - run: dep ensure
       - run: make build
       - run: make ci
 
@@ -15,6 +17,8 @@ jobs:
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
+      - run: make install-build-deps
+      - run: dep ensure
       - run: curl -sL https://git.io/goreleaser | bash
 workflows:
   version: 2
