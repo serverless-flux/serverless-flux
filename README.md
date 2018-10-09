@@ -5,7 +5,7 @@ Bringing [GitOps](https://www.weave.works/blog/what-is-gitops-really) to Serverl
 
 ## Description
 
-The purpose of the Serverless-Operator project is to enable GitOps for serverless applications. A Git repo should represent the desired state of any number of serverless solutions and this state will be reconciled with the current state within a cloud provider. 
+The purpose of the Serverless-Operator project is to enable GitOps for serverless applications. A Git repo should represent the desired state of any number of serverless solutions and this state will be reconciled with the current state within a cloud provider.
 
 The project has been started due to a gap in the serverless CICD experience, especially for scenarios where:
 - multiple environments are needed
@@ -28,3 +28,7 @@ As this is a new project we are looking for people to help out with the project.
 - [ ] SaaS Edition that people can use if they don't want to run Kubernetes.
 - [ ] A large sample serverless framework application that cen be used for demos.
 - [ ] Support secrets via Bitnami SealedSecrets
+
+# Thanks
+
+With thanks to Christoper Hein and the [AWS Service Operator](https://github.com/awslabs/aws-service-operator) which has been used as the starting point for this operator.

@@ -25,8 +25,8 @@ test: ## Run unit tests
 	@test -z $(COVERALLS_TOKEN) || $(GOPATH)/bin/goveralls -coverprofile=coverage.out -service=circle-ci
 
 .PHONY: lint
-lint: ## Run GoMetalinter over the codebase
-	@$(GOPATH)/bin/gometalinter ./...
+lint: ## Run linting over the codebase
+	@$(GOPATH)/bin/golangci-lint run
 
 .PHONY: ci
 ci: test lint ## Target for CI system to invoke to run tests and linting

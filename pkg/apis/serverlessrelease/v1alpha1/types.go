@@ -12,7 +12,7 @@ import (
 // ServerlessRelease represents a Serverless.com app release
 type ServerlessRelease struct {
 	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata, omitempty"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
 
 	Spec   ServerlessReleaseSpec   `json:"spec"`
 	Status ServerlessReleaseStatus `json:"status"`

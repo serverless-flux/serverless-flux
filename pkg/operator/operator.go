@@ -6,6 +6,8 @@ import (
 
 	opkit "github.com/rook/operator-kit"
 	slsscheme "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/scheme"
+
+	// nolint:lll
 	slsclient "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/typed/serverlessrelease/v1alpha1"
 	"github.com/serverless-operator/serverless-operator/pkg/config"
 	corev1 "k8s.io/api/core/v1"
@@ -55,9 +57,13 @@ func (o *Operator) Run(stopChan <-chan struct{}) {
 
 	logger.Info("Watching the resources")
 	controller := NewController(o.Config, context, slsClientSet)
-	controller.StartWatch(corev1.NamespaceAll, stopChan)
+	err = controller.StartWatch(corev1.NamespaceAll, stopChan)
+	if err != nil {
+		logger.Fatalf("Failed to start watching resource. %+v\n", err)
+	}
 }
 
+// nolint:lll
 func createContext(kubeconfig string) (*opkit.Context, *rest.Config, kubernetes.Interface, slsclient.ReleaseV1alpha1Interface, error) {
 	config, err := getClientConfig(kubeconfig)
 	if err != nil {
