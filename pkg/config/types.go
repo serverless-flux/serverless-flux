@@ -1,7 +1,7 @@
 package config
 
 import (
-	opkit "github.com/christopherhein/operator-kit"
+	opkit "github.com/rook/operator-kit"
 	slsclient "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/typed/serverlessrelease/v1alpha1"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/rest"

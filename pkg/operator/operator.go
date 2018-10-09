@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	opkit "github.com/christopherhein/operator-kit"
-	serverless "github.com/serverless-operator/serverless-operator/pkg/apis/serverlessrelease/v1alpha1"
+	opkit "github.com/rook/operator-kit"
 	slsscheme "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/scheme"
 	slsclient "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/typed/serverlessrelease/v1alpha1"
 	"github.com/serverless-operator/serverless-operator/pkg/config"
@@ -41,7 +40,7 @@ func (o *Operator) Run(stopChan <-chan struct{}) {
 	o.Config.RESTConfig = restConfig
 
 	logger.Info("Registering resources")
-	resources := []opkit.CustomResource{serverless.ServerlessRelease}
+	resources := []opkit.CustomResource{Resource}
 	err = opkit.CreateCustomResources(*context, resources)
 	if err != nil {
 		logger.Fatalf("Failed to create customer resource. %+v\n", err)

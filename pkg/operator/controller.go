@@ -1,7 +1,7 @@
 package operator
 
 import (
-	opkit "github.com/christopherhein/operator-kit"
+	opkit "github.com/rook/operator-kit"
 	sls "github.com/serverless-operator/serverless-operator/pkg/apis/serverlessrelease/v1alpha1"
 	slsclient "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/typed/serverlessrelease/v1alpha1"
 	"github.com/serverless-operator/serverless-operator/pkg/config"
@@ -31,7 +31,7 @@ func (c *Controller) StartWatch(namespace string, stopCh <-chan struct{}) error 
 		DeleteFunc: c.onDelete,
 	}
 	restClient := c.slsClientSet.RESTClient()
-	watcher := opkit.NewWatcher(sls.ServerlessRelease, namespace, resourceHandlers, restClient)
+	watcher := opkit.NewWatcher(Resource, namespace, resourceHandlers, restClient)
 	go watcher.Watch(&sls.ServerlessRelease{}, stopCh)
 
 	return nil
@@ -44,8 +44,8 @@ func (c *Controller) onAdd(obj interface{}) {
 }
 
 func (c *Controller) onUpdate(oldObj, newObj interface{}) {
-	slsReleaseOld := obj.(*oldObj.ServerlessRelease).DeepCopy()
-	slsReleaseNew := obj.(*newObj.ServerlessRelease).DeepCopy()
+	slsReleaseOld := oldObj.(*sls.ServerlessRelease).DeepCopy()
+	slsReleaseNew := newObj.(*sls.ServerlessRelease).DeepCopy()
 
 	c.config.Logger.Infof("Serverless release updated from %s to package %s\n", slsReleaseOld.Spec.PackagePath, slsReleaseNew.Spec.PackagePath)
 }
