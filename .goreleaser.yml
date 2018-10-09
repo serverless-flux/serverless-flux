@@ -43,3 +43,13 @@ dockers:
 
 checksum:
   name_template: "{{ .ProjectName }}_checksums.txt"
+
+#snapshot:
+#    name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+        - '^docs:'
+        - '^tests:'
