@@ -1,0 +1,45 @@
+project_name: serverless-operator
+
+before:
+    hooks:
+    - make codegen
+
+builds:
+- binary: serverless-operator
+  main: ./cmd/serverless-operator/
+  env:
+    - CGO_ENABLED=0
+  goos:
+  - darwin
+  - linux
+  - windows
+  goarch:
+  - amd64
+
+archive:
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
+
+release:
+  github:
+    owner: serverless-operator
+    name: serverless-operator
+  draft: true
+  prerelease: true
+
+dockers:
+- image: serverless-operator/serverless-operator
+  binary: serverless-operator
+  dockerfile: Dockerfile
+  tag_templates:
+  - "{{ .Tag }}"
+  - "latest"
+
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"

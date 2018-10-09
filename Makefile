@@ -1,7 +1,6 @@
 BUILDCOMMIT := $(shell git describe --dirty --always)
 BUILDDATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-VER_IMPORT=github.com/serverless-operator/serverless-operator/pkg/version
-VER_FLAGS=-X $(VER_IMPORT).GitHash=$(BUILDCOMMIT) -X $(VER_IMPORT).BuildDate=$(BUILDDATE)
+VER_FLAGS=-X main.commit=$(BUILDCOMMIT) -X main.date=$(BUILDDATE)
 
 .DEFAULT_GOAL:=help
 
@@ -14,8 +13,18 @@ install-build-deps: ## Install dependencies (packages and tools)
 ##@ Build
 
 .PHONY: build
-build:
+build: ## Build the operator
 	go build -ldflags "$(VER_FLAGS)" ./cmd/serverless-operator
+
+##@ Release
+
+.PHONY: release
+release: ## Create a release
+	goreleaser --rm-dist
+
+.PHONY: dev-release
+dev-release: ## Create a development release
+	goreleaser --rm-dist --snapshot --skip-publish
 
 ##@ Testing & CI
 
