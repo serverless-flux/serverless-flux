@@ -14,7 +14,11 @@
             "args": [
                 "run",
                 "-k",
-                "${env:HOME}/.kube/config"
+                "${env:HOME}/.kube/config",
+                "--node-path",
+                "${env:HOME}/.nvm/versions/node/v10.11.0/bin/node",
+                "--serverless-path",
+                "/usr/local/bin/serverless"
             ]
         }
     ]

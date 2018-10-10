@@ -12,10 +12,12 @@ import (
 )
 
 var (
-	kubeconfig string
-	cfgFile    string
-	logLevel   string
-	logFile    string
+	kubeconfig     string
+	cfgFile        string
+	logLevel       string
+	logFile        string
+	serverlessPath string
+	nodePath       string
 
 	rootCmd = &cobra.Command{
 		Use:   "serverless-operator",
@@ -46,11 +48,19 @@ func init() {
 		"Absolute path to the kubeconfig file. Only required if out-of-cluster.")
 	rootCmd.PersistentFlags().StringVarP(&logLevel, "loglevel", "l", "Info", "Log level for the CLI")
 	rootCmd.PersistentFlags().StringVarP(&logFile, "logfile", "", "", "Log level for the CLI")
+	rootCmd.PersistentFlags().StringVarP(&serverlessPath,
+		"serverless-path", "s", "",
+		"Absolute path to the serverless command. If empty (default) then it will be looked up on the path")
+	rootCmd.PersistentFlags().StringVarP(&nodePath,
+		"node-path", "n", "",
+		"Absolute path to the nodejs executable. If empty (default) then it will be looked up on the path")
 
 	_ = viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 	_ = viper.BindPFlag("kubeconfig", rootCmd.PersistentFlags().Lookup("kubeconfig"))
 	_ = viper.BindPFlag("loglevel", rootCmd.PersistentFlags().Lookup("loglevel"))
 	_ = viper.BindPFlag("logfile", rootCmd.PersistentFlags().Lookup("logfile"))
+	_ = viper.BindPFlag("serverless-path", rootCmd.PersistentFlags().Lookup("serverless-path"))
+	_ = viper.BindPFlag("node-path", rootCmd.PersistentFlags().Lookup("node-path"))
 }
 
 func initConfig() {

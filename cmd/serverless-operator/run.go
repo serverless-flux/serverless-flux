@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/serverless-operator/serverless-operator/pkg/config"
+	"github.com/serverless-operator/serverless-operator/pkg/dependencies"
 	"github.com/serverless-operator/serverless-operator/pkg/logging"
 	"github.com/serverless-operator/serverless-operator/pkg/operator"
 	"github.com/serverless-operator/serverless-operator/pkg/signal"
@@ -21,6 +22,11 @@ var runCmd = &cobra.Command{
 			logrus.Fatalf("failed to configure logging: %s", err.Error())
 		}
 		config.Logger = logger
+
+		err = dependencies.Check(config)
+		if err != nil {
+			logger.Fatalf("dependency check failed: %s", err.Error())
+		}
 
 		stopChan := signal.SetupSignalHandler()
 
@@ -44,6 +50,10 @@ func getConfig() *config.Config {
 			Level:             logLevel,
 			FullTimestamps:    true,
 			DisableTimestamps: false,
+		},
+		Depenendencies: &config.DependenciesConfig{
+			ServerlessPath: serverlessPath,
+			NodePath:       nodePath,
 		},
 	}
 

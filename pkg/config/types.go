@@ -11,12 +11,13 @@ import (
 
 // Config represent the configuration of the operator
 type Config struct {
-	Kubeconfig    string
-	SlsClientSet  slsclient.ReleaseV1alpha1Interface
-	RESTConfig    *rest.Config
-	Context       *opkit.Context
-	LoggingConfig *LoggingConfig
-	Logger        *logrus.Entry
+	Kubeconfig     string
+	SlsClientSet   slsclient.ReleaseV1alpha1Interface
+	RESTConfig     *rest.Config
+	Context        *opkit.Context
+	LoggingConfig  *LoggingConfig
+	Logger         *logrus.Entry
+	Depenendencies *DependenciesConfig
 	//TODO: add the rest
 	Recorder record.EventRecorder
 }
@@ -27,4 +28,10 @@ type LoggingConfig struct {
 	Level             string
 	DisableTimestamps bool
 	FullTimestamps    bool
+}
+
+// DependenciesConfig defines the config relevenat to dependencies
+type DependenciesConfig struct {
+	ServerlessPath string
+	NodePath       string
 }
