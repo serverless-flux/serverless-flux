@@ -1,0 +1,25 @@
+---
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: sample1-config
+  namespace: default
+  labels:
+    mylabel: somevalue
+data:
+    region: eu-west-1
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sample1-secrets
+  namespace: default
+type: Opaque
+data:
+  username: YWRtaW4=
+
+
+

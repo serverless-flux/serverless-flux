@@ -2,6 +2,7 @@ apiVersion: serverless-operator.io/v1alpha1
 kind: ServerlessRelease
 metadata:
   name: example-serverless-app
+  namespace: default
 spec:
   packagePath: test-package.zip
   releaseName: testing-v0.0.1
@@ -14,5 +15,11 @@ spec:
     - name: MYSECRET_VAR
       valueFrom:
         secretKeyRef:
-            name: MYSECRET_VAR
+            name: sample1-secrets
             key: username
+    - name: MYCONFIG_VAR
+      valueFrom:
+        configMapKeyRef:
+            name: sample1-config
+            key: region
+

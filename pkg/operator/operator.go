@@ -40,6 +40,7 @@ func (o *Operator) Run(stopChan <-chan struct{}) {
 	o.Config.Context = context
 	o.Config.SlsClientSet = slsClientSet
 	o.Config.RESTConfig = restConfig
+	o.Config.KubeClientset = kubeClientset
 
 	logger.Info("Registering resources")
 	resources := []opkit.CustomResource{Resource}

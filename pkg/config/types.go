@@ -5,6 +5,7 @@ import (
 	// nolint:lll
 	slsclient "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/typed/serverlessrelease/v1alpha1"
 	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/record"
 )
@@ -12,6 +13,7 @@ import (
 // Config represent the configuration of the operator
 type Config struct {
 	Kubeconfig     string
+	KubeClientset  kubernetes.Interface
 	SlsClientSet   slsclient.ReleaseV1alpha1Interface
 	RESTConfig     *rest.Config
 	Context        *opkit.Context

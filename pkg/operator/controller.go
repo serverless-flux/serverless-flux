@@ -7,6 +7,7 @@ import (
 	// nolint:lll
 	slsclient "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/typed/serverlessrelease/v1alpha1"
 	"github.com/serverless-operator/serverless-operator/pkg/config"
+	"github.com/serverless-operator/serverless-operator/pkg/env"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -47,10 +48,28 @@ func (c *Controller) StartWatch(namespace string, stopCh <-chan struct{}) error 
 
 func (c *Controller) onAdd(obj interface{}) {
 	slsRelease := obj.(*sls.ServerlessRelease).DeepCopy()
+	logger := c.config.Logger
 
-	c.config.Logger.Infof("Serverless release added %s and package %s\n",
+	logger.Infof("Serverless release added %s and package %s\n",
 		slsRelease.Spec.ReleaseName,
 		slsRelease.Spec.PackagePath)
+
+	ns := slsRelease.Namespace
+
+	for _, envVar := range slsRelease.Spec.Env {
+		if envVar.ValueFrom == nil {
+			logger.Infof("env variable %s=%s\n", envVar.Name, envVar.Value)
+			continue
+		}
+
+		value, err := env.GetEnvVarValue(c.config.KubeClientset, ns, envVar.ValueFrom)
+		if err != nil {
+			logger.Errorf("error getting environment variable: %v", err)
+			continue
+		}
+		logger.Infof("env variable (from ref) %s=%s\n", envVar.Name, value)
+	}
+
 }
 
 func (c *Controller) onUpdate(oldObj, newObj interface{}) {
