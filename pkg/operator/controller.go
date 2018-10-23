@@ -7,7 +7,8 @@ import (
 	// nolint:lll
 	slsclient "github.com/serverless-operator/serverless-operator/pkg/client/clientset/versioned/typed/serverlessrelease/v1alpha1"
 	"github.com/serverless-operator/serverless-operator/pkg/config"
-	"github.com/serverless-operator/serverless-operator/pkg/env"
+	"github.com/serverless-operator/serverless-operator/pkg/release"
+
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -50,26 +51,38 @@ func (c *Controller) onAdd(obj interface{}) {
 	slsRelease := obj.(*sls.ServerlessRelease).DeepCopy()
 	logger := c.config.Logger
 
-	logger.Infof("Serverless release added %s and package %s\n",
-		slsRelease.Spec.ReleaseName,
-		slsRelease.Spec.PackagePath)
+	if slsRelease.Status.ReleaseStatus == "" || slsRelease.Status.ReleaseStatus == "DELETE_COMPLETE" {
 
-	ns := slsRelease.Namespace
-
-	for _, envVar := range slsRelease.Spec.Env {
-		if envVar.ValueFrom == nil {
-			logger.Infof("env variable %s=%s\n", envVar.Name, envVar.Value)
-			continue
+		namespace := slsRelease.GetNamespace()
+		if namespace == "" {
+			namespace = "default"
 		}
 
-		value, err := env.GetEnvVarValue(c.config.KubeClientset, ns, envVar.ValueFrom)
+		logger.Infof("Serverless release added %s and package %s\n",
+			slsRelease.Spec.ReleaseName,
+			slsRelease.Spec.PackagePath)
+
+		releaseName := release.GetReleaseName(*slsRelease)
+		release := release.New(c.config)
+
+		err := release.Install(releaseName, *slsRelease)
 		if err != nil {
-			logger.Errorf("error getting environment variable: %v", err)
-			continue
+			//TODO: set the status accordingly
+			logger.Errorf("error deploying: %v", err)
+			return
 		}
-		logger.Infof("env variable (from ref) %s=%s\n", envVar.Name, value)
-	}
 
+		// update status
+		slsRelease.Status.ReleaseStatus = "DEPLOYED"
+		//c.config.SlsClientSet.RESTClient().
+
+		_, err = c.slsClientSet.ServerlessReleases(namespace).Update(slsRelease)
+		if err != nil {
+			logger.Errorf("error updating status of release")
+			return
+		}
+		logger.Infof("serverless release %s has been deployed succesfully\n", releaseName)
+	}
 }
 
 func (c *Controller) onUpdate(oldObj, newObj interface{}) {
